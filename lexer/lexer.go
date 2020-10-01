@@ -54,7 +54,7 @@ func (l *Lexer) skipWhitespace() {
 
 func (l *Lexer) id() token.Token {
 	pos := l.position
-	for utils.IsAlpha(l.ch) {
+	for utils.IsAlnum(l.ch) || l.ch == '_' {
 		l.advance()
 	}
 
@@ -95,6 +95,11 @@ func (l *Lexer) str() token.Token {
 	return token.New(token.STRING_CONST, id)
 }
 
+// CurrentChar return the character pointed to by the 'position' pointer
+func (l *Lexer) CurrentChar() byte {
+	return l.ch
+}
+
 // NextToken This method is responsible for breaking sentence
 // apart into tokens. One token one time
 func (l *Lexer) NextToken() token.Token {
@@ -132,8 +137,8 @@ func (l *Lexer) NextToken() token.Token {
 }
 
 // New create new lexer by given input
-func New(input string) *Lexer {
-	l := &Lexer{input: input}
+func New(input string) Lexer {
+	l := Lexer{input: input}
 	l.advance()
 	return l
 }

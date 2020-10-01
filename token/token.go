@@ -11,44 +11,42 @@ type Token struct {
 
 const (
 	// scalars
-	FALSE = "FALSE"
-	TRUE  = "TRUE"
-	NULL  = "NULL"
+	FALSE Type = "FALSE"
+	TRUE  Type = "TRUE"
+	NULL  Type = "NULL"
 
 	// logical operators
-	NOT = "NOT"
-	AND = "AND"
-	OR  = "OR"
-	XOR = "XOR"
+	AND Type = "AND"
+	OR  Type = "OR"
+	XOR Type = "XOR"
 
 	// single-character token types
-	LPAREN = "("
-	RPAREN = ")"
-	COMMA  = ","
-	DOT    = "."
-	COLON  = ":"
-	EQUAL  = "="
-	GT     = ">"
-	LT     = "<"
+	LPAREN Type = "("
+	RPAREN Type = ")"
+	COMMA  Type = ","
+	DOT    Type = "."
+	COLON  Type = ":"
+	EQUAL  Type = "="
+	GT     Type = ">"
+	LT     Type = "<"
 
 	// double-character token types
-	NOT_EQUAL   = "!="
-	GT_OR_EQUAL = ">="
-	LT_OR_EQUAL = "<="
+	NOT_EQUAL   Type = "!="
+	GT_OR_EQUAL Type = ">="
+	LT_OR_EQUAL Type = "<="
 
 	// misc
-	IDENT         = "IDENT"
-	EOF           = "EOF"
-	INTEGER_CONST = "INTEGER_CONST"
-	FLOAT_CONST   = "FLOAT_CONST"
-	STRING_CONST  = "STRING_CONST"
+	IDENT         Type = "IDENT"
+	EOF           Type = "EOF"
+	INTEGER_CONST Type = "INTEGER_CONST"
+	FLOAT_CONST   Type = "FLOAT_CONST"
+	STRING_CONST  Type = "STRING_CONST"
 )
 
 var keywords = map[string]Type{
 	"false": FALSE,
 	"true":  TRUE,
 	"null":  NULL,
-	"not":   NOT,
 	"and":   AND,
 	"or":    OR,
 	"xor":   XOR,

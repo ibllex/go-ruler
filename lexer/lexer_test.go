@@ -10,7 +10,8 @@ import (
 
 func TestNextToken(t *testing.T) {
 
-	input := "() , . : = > < != >= <= false true null not and or xor 10 20.0 'username' \"hello\" :gender female"
+	// TODO: support bit operation
+	input := "() , . : = > < != >= <= false true null and or xor 10 20.0 'username' \"hello\" :gender_de female_02"
 
 	tests := []struct {
 		expectedType    token.Type
@@ -30,7 +31,6 @@ func TestNextToken(t *testing.T) {
 		{token.FALSE, "false"},
 		{token.TRUE, "true"},
 		{token.NULL, "null"},
-		{token.NOT, "not"},
 		{token.AND, "and"},
 		{token.OR, "or"},
 		{token.XOR, "xor"},
@@ -39,8 +39,8 @@ func TestNextToken(t *testing.T) {
 		{token.STRING_CONST, "username"},
 		{token.STRING_CONST, "hello"},
 		{token.COLON, ":"},
-		{token.IDENT, "gender"},
-		{token.IDENT, "female"},
+		{token.IDENT, "gender_de"},
+		{token.IDENT, "female_02"},
 	}
 
 	l := New(input)
