@@ -1,6 +1,6 @@
 package ast
 
-// AST AST node interface
-type AST interface {
-	//
+// Node the base Node interface
+type Node interface {
+	Literal() string
 }

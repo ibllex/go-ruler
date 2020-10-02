@@ -2,12 +2,16 @@ package ast
 
 // Target target value
 type Target struct {
-	id Ident
+	id *Ident
+}
+
+func (t *Target) Literal() string {
+	return t.id.Literal()
 }
 
 // NewTarget construct target node
-func NewTarget(id Ident) Target {
-	return Target{
+func NewTarget(id *Ident) *Target {
+	return &Target{
 		id: id,
 	}
 }

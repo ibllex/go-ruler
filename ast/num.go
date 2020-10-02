@@ -8,9 +8,13 @@ type Num struct {
 	value string
 }
 
+func (n *Num) Literal() string {
+	return n.token.Literal
+}
+
 // NewNum construct a number node
-func NewNum(tk token.Token) Num {
-	return Num{
+func NewNum(tk token.Token) *Num {
+	return &Num{
 		token: tk,
 		value: tk.Literal,
 	}

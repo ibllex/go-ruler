@@ -25,7 +25,7 @@ func (p *Parser) eat(t token.Type) error {
 }
 
 // expr: term ((AND/OR/XOR) term)*
-func (p *Parser) expr() (node ast.AST, err error) {
+func (p *Parser) expr() (node ast.Node, err error) {
 	if node, err = p.term(); err != nil {
 		return
 	}
@@ -51,7 +51,7 @@ func (p *Parser) expr() (node ast.AST, err error) {
 }
 
 // term: factor ((EQUAL/GT/LT/NOT_EQUAL/GT_OR_EQUAL/LT_OR_EQUAL) factor)*
-func (p *Parser) term() (node ast.AST, err error) {
+func (p *Parser) term() (node ast.Node, err error) {
 	node, err = p.factor()
 	if err != nil {
 		return
@@ -87,7 +87,7 @@ func (p *Parser) term() (node ast.AST, err error) {
 
 // factor: INTEGER_CONST | FLOAT_CONST | STRING_CONST | FALSE | TRUE | NULL
 // 			functionCall | target | param | LPAREN expr RPAREN
-func (p *Parser) factor() (node ast.AST, err error) {
+func (p *Parser) factor() (node ast.Node, err error) {
 	tk := p.currentToken
 
 	if tk.Type == token.IDENT {
@@ -141,7 +141,7 @@ func (p *Parser) factor() (node ast.AST, err error) {
 }
 
 // functionCall: IDENT LPAREN (expr (COMMA expr)*)? RPAREN
-func (p *Parser) functionCall() (node ast.AST, err error) {
+func (p *Parser) functionCall() (node ast.Node, err error) {
 	funcName := p.currentToken.Literal
 
 	if err = p.eat(token.IDENT); err != nil {
@@ -152,7 +152,7 @@ func (p *Parser) functionCall() (node ast.AST, err error) {
 		return
 	}
 
-	params := []ast.AST{}
+	params := []ast.Node{}
 
 	if p.currentToken.Type != token.RPAREN {
 		param, err := p.expr()
@@ -183,18 +183,18 @@ func (p *Parser) functionCall() (node ast.AST, err error) {
 }
 
 // target: ident
-func (p *Parser) target() (node ast.AST, err error) {
+func (p *Parser) target() (node ast.Node, err error) {
 	node, err = p.ident()
 	if err != nil {
 		return nil, err
 	}
 
-	node = ast.NewTarget(node.(ast.Ident))
+	node = ast.NewTarget(node.(*ast.Ident))
 	return
 }
 
 // param: COLON ident
-func (p *Parser) param() (node ast.AST, err error) {
+func (p *Parser) param() (node ast.Node, err error) {
 	err = p.eat(token.COLON)
 	if err != nil {
 		return
@@ -205,12 +205,12 @@ func (p *Parser) param() (node ast.AST, err error) {
 		return nil, err
 	}
 
-	node = ast.NewParam(node.(ast.Ident))
+	node = ast.NewParam(node.(*ast.Ident))
 	return
 }
 
 // ident: IDENT (DOT IDENT)*
-func (p *Parser) ident() (node ast.AST, err error) {
+func (p *Parser) ident() (node ast.Node, err error) {
 	path := []string{p.currentToken.Literal}
 	err = p.eat(token.IDENT)
 	if err != nil {
@@ -232,7 +232,7 @@ func (p *Parser) ident() (node ast.AST, err error) {
 }
 
 // Parse parser's entry, return top level ast node
-func (p *Parser) Parse() (node ast.AST, err error) {
+func (p *Parser) Parse() (node ast.Node, err error) {
 	n, err := p.expr()
 	return n, err
 }
