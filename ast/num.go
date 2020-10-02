@@ -4,18 +4,18 @@ import "github.com/ibllex/go-ruler/token"
 
 // Num num node, include float and integer
 type Num struct {
-	token token.Token
-	value string
+	Token token.Token
+	Value string
 }
 
 func (n *Num) Literal() string {
-	return n.token.Literal
+	return n.Token.Literal
 }
 
 // NewNum construct a number node
 func NewNum(tk token.Token) *Num {
 	return &Num{
-		token: tk,
-		value: tk.Literal,
+		Token: tk,
+		Value: tk.Literal,
 	}
 }

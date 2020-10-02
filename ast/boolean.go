@@ -5,7 +5,7 @@ import "github.com/ibllex/go-ruler/token"
 // Boolean boolean type node
 type Boolean struct {
 	token token.Token
-	value bool
+	Value bool
 }
 
 // Literal token literal
@@ -23,6 +23,6 @@ func NewBoolean(tk token.Token) *Boolean {
 
 	return &Boolean{
 		token: tk,
-		value: v,
+		Value: v,
 	}
 }

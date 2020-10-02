@@ -26,3 +26,23 @@ func InArray(v interface{}, arr []interface{}) bool {
 
 	return false
 }
+
+// QueryInMapInter query value in map[string]interface{} by path
+func QueryInMapInter(data map[string]interface{}, path []string) interface{} {
+
+	var v interface{} = nil
+
+	for _, k := range path {
+
+		if v == nil {
+			v = data[k]
+		} else if m, ok := v.(map[string]interface{}); ok {
+			v = m[k]
+		} else {
+			v = nil
+			break
+		}
+	}
+
+	return v
+}

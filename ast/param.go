@@ -2,16 +2,16 @@ package ast
 
 // Param param value
 type Param struct {
-	id *Ident
+	ID *Ident
 }
 
 func (p *Param) Literal() string {
-	return p.id.Literal()
+	return p.ID.Literal()
 }
 
 // NewParam construct Param node
 func NewParam(id *Ident) *Param {
 	return &Param{
-		id: id,
+		ID: id,
 	}
 }
