@@ -34,3 +34,28 @@ func TestSatisfies(t *testing.T) {
 		}
 	}
 }
+
+func TestFilter(t *testing.T) {
+	ruler := New()
+	rule := "gender = :gender and points > :min_points"
+
+	params := interpreter.P{
+		"min_points": 30,
+		"gender":     "M",
+	}
+
+	users := []interpreter.T{
+		{"pseudo": "Joe", "gender": "M", "points": 40},
+		{"pseudo": "Moe", "gender": "M", "points": 20},
+		{"pseudo": "Alice", "gender": "F", "points": 60},
+	}
+
+	remainder, err := ruler.Filter(users, rule, params)
+	if err != nil {
+		t.Errorf("filter error: %v", err)
+	}
+
+	if len(remainder) != 1 {
+		t.Errorf("remainder's count greater than one")
+	}
+}
