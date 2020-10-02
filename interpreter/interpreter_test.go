@@ -41,7 +41,9 @@ func TestInterpreter(t *testing.T) {
 	// for i, s := range statements {
 	// 	interpreter := makeInterpreter(s.Src, s.Target, s.Params)
 	// 	r := interpreter.Exec()
-	// 	if r.(object.HashTable).HashKey() != s.Result.(object.HashTable).HashKey() {
+	// 	if object.IsNull(r) {
+	// 		t.Fatalf("Expression[%d] returns Null", i)
+	// 	} else if r.(object.HashTable).HashKey() != s.Result.(object.HashTable).HashKey() {
 	// 		t.Fatalf("Expression[%d] '%v' does not match the result: expected '%v', got '%v'", i, s.Src, r, s.Result)
 	// 	}
 	// }

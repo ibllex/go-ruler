@@ -34,7 +34,7 @@ func (i *Interpreter) evalLogicalOp(node *ast.LogicalOp) object.Object {
 
 	// switch node.Token.Type {
 	// case token.AND:
-	// 	return left && right
+	// 	return left.Cast(object.BOOLEAN).(*object.Boolean).Value && right.Cast(object.BOOLEAN).(*object.Boolean).Value
 	// case token.OR:
 	// 	return left || right
 	// case token.XOR:
