@@ -31,3 +31,9 @@ type Object interface {
 	Inspect() string
 	Cast(Type) Object
 }
+
+// IsNull returns an object is Null or not
+func IsNull(o Object) bool {
+	_, ok := o.(*Null)
+	return ok
+}

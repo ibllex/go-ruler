@@ -15,6 +15,7 @@ func makeInterpreter(src string, target T, params P) Interpreter {
 }
 
 func TestInterpreter(t *testing.T) {
+
 	// statements := []struct {
 	// 	Src    string
 	// 	Result object.Object

@@ -8,6 +8,18 @@ type TypeCastData struct {
 	Result Object
 }
 
+func assertObjectsCast(t *testing.T, values []TypeCastData) {
+	t.Helper()
+
+	for i, v := range values {
+		newObject := v.Value.Cast(v.Cast)
+
+		if newObject.(HashTable).HashKey() != v.Result.(HashTable).HashKey() {
+			t.Errorf("values[%d] cast failed, expected %v but got %v.", i, v.Result, newObject)
+		}
+	}
+}
+
 func TestBooleanHashKey(t *testing.T) {
 	true1 := &Boolean{Value: true}
 	true2 := &Boolean{Value: true}
@@ -187,14 +199,23 @@ func TestNullCast(t *testing.T) {
 	assertObjectsCast(t, values)
 }
 
-func assertObjectsCast(t *testing.T, values []TypeCastData) {
-	t.Helper()
+func TestIsNull(t *testing.T) {
+	values := []Object{
+		&String{""},
+		&String{"hello world"},
+		&Integer{0},
+		&Float{0},
+		&Boolean{true},
+		&Boolean{false},
+	}
 
 	for i, v := range values {
-		newObject := v.Value.Cast(v.Cast)
-
-		if newObject.(HashTable).HashKey() != v.Result.(HashTable).HashKey() {
-			t.Errorf("values[%d] cast failed, expected %v but got %v.", i, v.Result, newObject)
+		if IsNull(v) {
+			t.Errorf("values[%d](%v) is not Null", i, v)
 		}
+	}
+
+	if IsNull(&Null{}) == false {
+		t.Errorf("Null object is not equal Null")
 	}
 }
