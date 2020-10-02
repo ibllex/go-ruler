@@ -17,20 +17,31 @@ func makeInterpreter(src string, target T, params P) Interpreter {
 func TestInterpreter(t *testing.T) {
 	// statements := []struct {
 	// 	Src    string
-	// 	Result bool
+	// 	Result object.Object
 	// 	Target T
 	// 	Params P
 	// }{
-	// 	{"gender = :gender and points > :min_points", false, T{
+	// 	{"gender = :gender and points > :min_points", &object.Boolean{Value: false}, T{
 	// 		"gender": 'F',
 	// 		"points": 30,
 	// 	}, P{
 	// 		"gender": 'M',
 	// 		"points": 10,
 	// 	}},
+	// 	{"gender = :gender and points > :min_points", &object.Boolean{Value: true}, T{
+	// 		"gender": 'M',
+	// 		"points": 11,
+	// 	}, P{
+	// 		"gender": 'M',
+	// 		"points": 10,
+	// 	}},
 	// }
 
-	// for s := range statements {
-	// 	//
+	// for i, s := range statements {
+	// 	interpreter := makeInterpreter(s.Src, s.Target, s.Params)
+	// 	r := interpreter.Exec()
+	// 	if r.(object.HashTable).HashKey() != s.Result.(object.HashTable).HashKey() {
+	// 		t.Fatalf("Expression[%d] '%v' does not match the result: expected '%v', got '%v'", i, s.Src, r, s.Result)
+	// 	}
 	// }
 }
