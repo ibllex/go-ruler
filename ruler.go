@@ -12,25 +12,25 @@ type Ruler struct {
 	//
 }
 
-func makeInterpreter(target interpreter.T, rule string, params interpreter.P) (*interpreter.Interpreter, error) {
+func makeInterpreter(rule string) (*interpreter.Interpreter, error) {
 	p := parser.New(lexer.New(rule))
 	tree, err := p.Parse()
 	if err != nil {
 		return nil, err
 	}
 
-	i := interpreter.New(tree, target, params)
+	i := interpreter.New(tree)
 	return &i, nil
 }
 
 // Satisfies returns true if the target matches the rules, false otherwise.
 func (r *Ruler) Satisfies(target interpreter.T, rule string, params interpreter.P) (bool, error) {
-	i, err := makeInterpreter(target, rule, params)
+	i, err := makeInterpreter(rule)
 	if err != nil {
 		return false, err
 	}
 
-	return object.ToNativeBool(i.Exec()), nil
+	return object.ToNativeBool(i.Exec(target, params)), nil
 }
 
 // Filter filter and return all targets that match the rules

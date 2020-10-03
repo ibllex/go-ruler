@@ -112,15 +112,15 @@ func (i *Interpreter) evalLogicalOp(node *ast.LogicalOp) object.Object {
 }
 
 // Exec Execute the expression and return the result
-func (i *Interpreter) Exec() object.Object {
+func (i *Interpreter) Exec(target T, params P) object.Object {
+	i.target = target
+	i.params = params
 	return i.eval(i.root)
 }
 
 // New construct Interpreter
-func New(tree ast.Node, target T, params P) Interpreter {
+func New(tree ast.Node) Interpreter {
 	return Interpreter{
-		root:   tree,
-		target: target,
-		params: params,
+		root: tree,
 	}
 }

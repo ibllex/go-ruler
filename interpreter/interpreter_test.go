@@ -8,44 +8,49 @@ import (
 	"github.com/ibllex/go-ruler/parser"
 )
 
-func makeInterpreter(src string, target T, params P) Interpreter {
+type filterItem struct {
+	Result object.Object
+	Target T
+	Params P
+}
+
+func makeInterpreter(src string) Interpreter {
 	p := parser.New(lexer.New(src))
 	tree, _ := p.Parse()
 
-	return New(tree, target, params)
+	return New(tree)
 }
 
 func TestInterpreter(t *testing.T) {
 
-	statements := []struct {
-		Src    string
-		Result object.Object
-		Target T
-		Params P
-	}{
-		{"gender = :gender and points > :min_points", &object.Boolean{Value: false}, T{
-			"gender": "F",
-			"points": 30,
-		}, P{
-			"gender": "M",
-			"points": 10,
-		}},
-		{"gender = :gender and points > :min_points", &object.Boolean{Value: true}, T{
-			"gender": "M",
-			"points": 11,
-		}, P{
-			"gender": "M",
-			"points": 10,
-		}},
+	statements := make(map[string][]filterItem)
+	statements["gender = :gender and points > :min_points"] = []filterItem{
+		{
+			Result: &object.Boolean{Value: false},
+			Target: T{"gender": "F", "points": 30},
+			Params: P{"gender": "M", "min_points": 10},
+		},
+		{
+			Result: &object.Boolean{Value: false},
+			Target: T{"gender": "M", "points": 9},
+			Params: P{"gender": "M", "min_points": 10},
+		},
+		{
+			Result: &object.Boolean{Value: true},
+			Target: T{"gender": "M", "points": 11},
+			Params: P{"gender": "M", "min_points": 10},
+		},
 	}
 
-	for i, s := range statements {
-		interpreter := makeInterpreter(s.Src, s.Target, s.Params)
-		r := interpreter.Exec()
-		if object.IsNull(r) {
-			t.Fatalf("Expression[%d] returns Null", i)
-		} else if r.(object.HashTable).HashKey() != s.Result.(object.HashTable).HashKey() {
-			t.Fatalf("Expression[%d] '%v' does not match the result: expected '%v', got '%v'", i, s.Src, r, s.Result)
+	for rule, items := range statements {
+		interpreter := makeInterpreter(rule)
+		for i, s := range items {
+			r := interpreter.Exec(s.Target, s.Params)
+			if object.IsNull(r) {
+				t.Fatalf("Rule: %s [%d] returns Null", rule, i)
+			} else if r.(object.HashTable).HashKey() != s.Result.(object.HashTable).HashKey() {
+				t.Fatalf("Rule: %s [%d] does not match the result: expected '%v', got '%v'", rule, i, r, s.Result)
+			}
 		}
 	}
 }
