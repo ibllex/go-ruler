@@ -9,17 +9,24 @@ import (
 	"github.com/ibllex/go-ruler/utils"
 )
 
+// Operator func type
+type Operator func(args ...object.Object) object.Object
+
 // T means Target which is a shortcut for map[string]interface{}
 type T map[string]interface{}
 
 // P means params which is a shortcut for map[string]interface{}
 type P map[string]interface{}
 
+// O means operators which is a shortcut for map[string]operator.Operator
+type O map[string]Operator
+
 // Interpreter exec rule and return true or false
 type Interpreter struct {
-	root   ast.Node
-	target T
-	params P
+	root      ast.Node
+	target    T
+	params    P
+	Operators O
 }
 
 func (i *Interpreter) eval(node ast.Node) object.Object {
@@ -119,8 +126,9 @@ func (i *Interpreter) Exec(target T, params P) object.Object {
 }
 
 // New construct Interpreter
-func New(tree ast.Node) Interpreter {
+func New(tree ast.Node, ops O) Interpreter {
 	return Interpreter{
-		root: tree,
+		root:      tree,
+		Operators: ops,
 	}
 }

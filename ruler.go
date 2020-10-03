@@ -12,20 +12,20 @@ type Ruler struct {
 	//
 }
 
-func makeInterpreter(rule string) (*interpreter.Interpreter, error) {
+func makeInterpreter(rule string, ops interpreter.O) (*interpreter.Interpreter, error) {
 	p := parser.New(lexer.New(rule))
 	tree, err := p.Parse()
 	if err != nil {
 		return nil, err
 	}
 
-	i := interpreter.New(tree)
+	i := interpreter.New(tree, ops)
 	return &i, nil
 }
 
 // Satisfies returns true if the target matches the rules, false otherwise.
 func (r *Ruler) Satisfies(target interpreter.T, rule string, params interpreter.P) (bool, error) {
-	i, err := makeInterpreter(rule)
+	i, err := makeInterpreter(rule, interpreter.O{})
 	if err != nil {
 		return false, err
 	}

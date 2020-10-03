@@ -14,14 +14,23 @@ type filterItem struct {
 	Params P
 }
 
-func makeInterpreter(src string) Interpreter {
+func makeInterpreter(src string, ops O) Interpreter {
 	p := parser.New(lexer.New(src))
 	tree, _ := p.Parse()
 
-	return New(tree)
+	return New(tree, ops)
 }
 
 func TestInterpreter(t *testing.T) {
+
+	operators := O{
+		"empty": func(args ...object.Object) object.Object {
+			return &object.Boolean{Value: true}
+		},
+		"in_array": func(args ...object.Object) object.Object {
+			return &object.Boolean{Value: true}
+		},
+	}
 
 	statements := make(map[string][]filterItem)
 	statements["gender = :gender and points > :min_points"] = []filterItem{
@@ -42,8 +51,32 @@ func TestInterpreter(t *testing.T) {
 		},
 	}
 
+	// function call
+	statements["empty(name) or in_array(:users, name)"] = []filterItem{
+		{
+			Result: &object.Boolean{Value: true},
+			Target: T{"name": "Joe"},
+			Params: P{"users": []string{"Joe", "Moe"}},
+		},
+		{
+			Result: &object.Boolean{Value: true},
+			Target: T{"name": "Moe"},
+			Params: P{"users": []string{"Joe", "Moe"}},
+		},
+		{
+			Result: &object.Boolean{Value: true},
+			Target: T{"name": ""},
+			Params: P{"users": []string{"Joe", "Moe"}},
+		},
+		{
+			Result: &object.Boolean{Value: false},
+			Target: T{"name": "Alice"},
+			Params: P{"users": []string{"Joe", "Moe"}},
+		},
+	}
+
 	for rule, items := range statements {
-		interpreter := makeInterpreter(rule)
+		interpreter := makeInterpreter(rule, operators)
 		for i, s := range items {
 			r := interpreter.Exec(s.Target, s.Params)
 			if object.IsNull(r) {
