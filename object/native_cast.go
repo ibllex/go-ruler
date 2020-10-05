@@ -19,3 +19,8 @@ func ToNativeFloat64(o Object) float64 {
 func ToNativeString(o Object) string {
 	return o.Cast(STRING).(*String).Value
 }
+
+// ToNativeArray convert object to native Object slice
+func ToNativeArray(o Object) []Object {
+	return o.Cast(ARRAY).(*Array).Elements
+}

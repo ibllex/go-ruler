@@ -111,3 +111,26 @@ func TestToNativeString(t *testing.T) {
 		}
 	}
 }
+
+func TestToNativeArray(t *testing.T) {
+	values := []NativeCastData{
+		{&Array{[]Object{&String{"hello world"}}}, []Object{&String{"hello world"}}},
+	}
+
+	for i, v := range values {
+		got := ToNativeArray(v.Object)
+		want := v.Native.([]Object)
+
+		if len(got) != len(want) {
+			t.Errorf("values[%d] to native not match expected", i)
+			continue
+		}
+
+		for j, item := range got {
+			if !item.Equals(want[j]) {
+				t.Errorf("values[%d] to native not match expected", i)
+				break
+			}
+		}
+	}
+}

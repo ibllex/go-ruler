@@ -41,7 +41,7 @@ func (a *Array) Equals(o Object) bool {
 		return false
 	}
 
-	// returns false if any one of element not equals
+	// returns false if any one of the elements are not equal
 	for i, e := range a.Elements {
 		if !e.Equals(ar.Elements[i]) {
 			return false
