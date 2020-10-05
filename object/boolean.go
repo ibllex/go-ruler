@@ -33,6 +33,17 @@ func (b *Boolean) HashKey() HashKey {
 	return HashKey{Type: b.Type(), Value: value}
 }
 
+// Equals returns if two objects are equal
+func (b *Boolean) Equals(o Object) bool {
+
+	// type cast left object if the two operands are not the same type
+	if b.Type() != o.Type() {
+		o = o.Cast(b.Type())
+	}
+
+	return b.HashKey() == o.(Hashable).HashKey()
+}
+
 // Cast type cast
 func (b *Boolean) Cast(t Type) Object {
 
@@ -54,6 +65,8 @@ func (b *Boolean) Cast(t Type) Object {
 			return &Float{1}
 		}
 		return &Float{0}
+	case ARRAY:
+		return &Array{[]Object{b}}
 	}
 
 	return &Null{}

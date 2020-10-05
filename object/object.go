@@ -1,7 +1,8 @@
 package object
 
 const (
-	NULL = "NULL"
+	NULL  = "NULL"
+	ARRAY = "ARRAY"
 
 	INTEGER = "INTEGER"
 	FLOAT   = "FLOAT"
@@ -20,8 +21,8 @@ type HashKey struct {
 	Value uint64
 }
 
-// HashTable base type
-type HashTable interface {
+// Hashable base type
+type Hashable interface {
 	HashKey() HashKey
 }
 
@@ -30,6 +31,7 @@ type Object interface {
 	Type() Type
 	Inspect() string
 	Cast(Type) Object
+	Equals(Object) bool
 }
 
 // IsNull returns an object is Null or not
@@ -40,14 +42,5 @@ func IsNull(o Object) bool {
 
 // IsEqual returns if two objects are equal
 func IsEqual(l Object, r Object) bool {
-	if IsNull(l) || IsNull(r) {
-		return IsNull(l) && IsNull(r)
-	}
-
-	// type cast left object if the two operands are not the same type
-	if l.Type() != r.Type() {
-		l = l.Cast(r.Type())
-	}
-
-	return l.(HashTable).HashKey() == r.(HashTable).HashKey()
+	return l.Equals(r)
 }

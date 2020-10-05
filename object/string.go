@@ -30,6 +30,16 @@ func (s *String) HashKey() HashKey {
 	return HashKey{Type: s.Type(), Value: h.Sum64()}
 }
 
+// Equals returns if two objects are equal
+func (s *String) Equals(o Object) bool {
+	// type cast left object if the two operands are not the same type
+	if s.Type() != o.Type() {
+		o = o.Cast(s.Type())
+	}
+
+	return s.HashKey() == o.(Hashable).HashKey()
+}
+
 // Cast type cast
 func (s *String) Cast(t Type) Object {
 
@@ -47,6 +57,8 @@ func (s *String) Cast(t Type) Object {
 	case FLOAT:
 		v, _ := strconv.ParseFloat(s.Value, 64)
 		return &Float{v}
+	case ARRAY:
+		return &Array{[]Object{s}}
 	}
 
 	return &Null{}

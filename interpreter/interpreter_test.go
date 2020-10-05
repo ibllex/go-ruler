@@ -81,7 +81,7 @@ func TestInterpreter(t *testing.T) {
 			r := interpreter.Exec(s.Target, s.Params)
 			if object.IsNull(r) {
 				t.Fatalf("Rule: %s [%d] returns Null", rule, i)
-			} else if r.(object.HashTable).HashKey() != s.Result.(object.HashTable).HashKey() {
+			} else if r.(object.Hashable).HashKey() != s.Result.(object.Hashable).HashKey() {
 				t.Fatalf("Rule: %s [%d] does not match the result: expected '%v', got '%v'", rule, i, r, s.Result)
 			}
 		}

@@ -26,6 +26,16 @@ func (i *Integer) HashKey() HashKey {
 	return HashKey{Type: i.Type(), Value: uint64(i.Value)}
 }
 
+// Equals returns if two objects are equal
+func (i *Integer) Equals(o Object) bool {
+	// type cast left object if the two operands are not the same type
+	if i.Type() != o.Type() {
+		o = o.Cast(i.Type())
+	}
+
+	return i.HashKey() == o.(Hashable).HashKey()
+}
+
 // Cast type cast
 func (i *Integer) Cast(t Type) Object {
 
@@ -38,6 +48,8 @@ func (i *Integer) Cast(t Type) Object {
 		return &Boolean{i.Value != 0}
 	case FLOAT:
 		return &Float{float64(i.Value)}
+	case ARRAY:
+		return &Array{[]Object{i}}
 	}
 
 	return &Null{}

@@ -14,6 +14,11 @@ func (n *Null) Inspect() string {
 	return "null"
 }
 
+// Equals returns if two objects are equal
+func (n *Null) Equals(o Object) bool {
+	return IsNull(o)
+}
+
 // Cast type cast
 func (n *Null) Cast(t Type) Object {
 
@@ -26,6 +31,8 @@ func (n *Null) Cast(t Type) Object {
 		return &Boolean{false}
 	case FLOAT:
 		return &Float{0}
+	case ARRAY:
+		return &Array{}
 	}
 
 	return n

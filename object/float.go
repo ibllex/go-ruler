@@ -27,6 +27,16 @@ func (f *Float) HashKey() HashKey {
 	return HashKey{Type: f.Type(), Value: math.Float64bits(f.Value)}
 }
 
+// Equals returns if two objects are equal
+func (f *Float) Equals(o Object) bool {
+	// type cast left object if the two operands are not the same type
+	if f.Type() != o.Type() {
+		o = o.Cast(f.Type())
+	}
+
+	return f.HashKey() == o.(Hashable).HashKey()
+}
+
 // Cast type cast
 func (f *Float) Cast(t Type) Object {
 
@@ -39,6 +49,8 @@ func (f *Float) Cast(t Type) Object {
 		return &Boolean{f.Value != 0}
 	case FLOAT:
 		return f
+	case ARRAY:
+		return &Array{[]Object{f}}
 	}
 
 	return &Null{}

@@ -14,7 +14,7 @@ func assertObjectsCast(t *testing.T, values []TypeCastData) {
 	for i, v := range values {
 		newObject := v.Value.Cast(v.Cast)
 
-		if newObject.(HashTable).HashKey() != v.Result.(HashTable).HashKey() {
+		if !newObject.Equals(v.Result) {
 			t.Errorf("values[%d] cast failed, expected %v but got %v.", i, v.Result, newObject)
 		}
 	}
@@ -113,6 +113,8 @@ func TestFloatCast(t *testing.T) {
 		{&Float{0}, BOOLEAN, &Boolean{false}},
 		{&Float{10.0}, BOOLEAN, &Boolean{true}},
 		{&Float{-10.0}, BOOLEAN, &Boolean{true}},
+
+		{&Float{10}, ARRAY, &Array{[]Object{&Float{10}}}},
 	}
 
 	assertObjectsCast(t, values)
@@ -136,6 +138,8 @@ func TestIntegerCast(t *testing.T) {
 		{&Integer{10}, BOOLEAN, &Boolean{true}},
 		{&Integer{0}, BOOLEAN, &Boolean{false}},
 		{&Integer{-10}, BOOLEAN, &Boolean{true}},
+
+		{&Integer{10}, ARRAY, &Array{[]Object{&Integer{10}}}},
 	}
 
 	assertObjectsCast(t, values)
@@ -155,6 +159,8 @@ func TestBooleanCast(t *testing.T) {
 
 		{&Boolean{true}, BOOLEAN, &Boolean{true}},
 		{&Boolean{false}, BOOLEAN, &Boolean{false}},
+
+		{&Boolean{true}, ARRAY, &Array{[]Object{&Boolean{true}}}},
 	}
 
 	assertObjectsCast(t, values)
@@ -182,6 +188,29 @@ func TestStringCast(t *testing.T) {
 		{&String{"null"}, BOOLEAN, &Boolean{true}},
 		{&String{""}, BOOLEAN, &Boolean{false}},
 		{&String{"0"}, BOOLEAN, &Boolean{false}},
+
+		{&String{"abc"}, ARRAY, &Array{[]Object{&String{"abc"}}}},
+	}
+
+	assertObjectsCast(t, values)
+}
+
+func TestArrayCast(t *testing.T) {
+	values := []TypeCastData{
+		{&Array{}, STRING, &String{"[]"}},
+		{&Array{[]Object{&Boolean{true}, &Integer{10}}}, STRING, &String{"[true, 10]"}},
+
+		{&Array{}, INTEGER, &Integer{0}},
+		{&Array{[]Object{&Boolean{true}, &Integer{10}}}, INTEGER, &Integer{2}},
+
+		{&Array{}, FLOAT, &Float{0}},
+		{&Array{[]Object{&Boolean{true}, &Integer{10}}}, FLOAT, &Float{2}},
+
+		{&Array{}, BOOLEAN, &Boolean{false}},
+		{&Array{[]Object{&Boolean{true}, &Integer{10}}}, BOOLEAN, &Boolean{true}},
+
+		{&Array{}, ARRAY, &Array{}},
+		{&Array{[]Object{&Boolean{true}, &Integer{10}}}, ARRAY, &Array{[]Object{&Boolean{true}, &Integer{10}}}},
 	}
 
 	assertObjectsCast(t, values)
@@ -194,6 +223,7 @@ func TestNullCast(t *testing.T) {
 		{&Null{}, INTEGER, &Integer{0}},
 		{&Null{}, FLOAT, &Float{0}},
 		{&Null{}, BOOLEAN, &Boolean{false}},
+		{&Null{}, ARRAY, &Array{}},
 	}
 
 	assertObjectsCast(t, values)
