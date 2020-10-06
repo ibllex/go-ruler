@@ -3,6 +3,8 @@ package interpreter
 import (
 	"testing"
 
+	"github.com/ibllex/go-ruler/operator"
+
 	"github.com/ibllex/go-ruler/lexer"
 	"github.com/ibllex/go-ruler/object"
 	"github.com/ibllex/go-ruler/parser"
@@ -24,29 +26,8 @@ func makeInterpreter(src string, ops O) Interpreter {
 func TestInterpreter(t *testing.T) {
 
 	operators := O{
-		"empty": func(args []object.Object) object.Object {
-			v := true
-			if len(args) > 0 {
-				v = object.IsEmpty(args[0])
-			}
-			return &object.Boolean{Value: v}
-		},
-		"in_array": func(args []object.Object) object.Object {
-			v := false
-			if len(args) >= 2 {
-				arr, _ := args[0].Cast(object.ARRAY).(*object.Array)
-				target := args[1]
-
-				for _, i := range arr.Elements {
-					if i.Equals(target) {
-						v = true
-						break
-					}
-				}
-			}
-
-			return &object.Boolean{Value: v}
-		},
+		"empty":    operator.Empty,
+		"in_array": operator.InArray,
 	}
 
 	statements := make(map[string][]filterItem)
@@ -68,7 +49,7 @@ func TestInterpreter(t *testing.T) {
 		},
 	}
 
-	// function call
+	// exec operator
 	statements["empty(name) or in_array(:users, name)"] = []filterItem{
 		{
 			Result: &object.Boolean{Value: true},

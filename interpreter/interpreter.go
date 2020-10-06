@@ -5,12 +5,10 @@ import (
 
 	"github.com/ibllex/go-ruler/ast"
 	"github.com/ibllex/go-ruler/object"
+	"github.com/ibllex/go-ruler/operator"
 	"github.com/ibllex/go-ruler/token"
 	"github.com/ibllex/go-ruler/utils"
 )
-
-// Operator func type
-type Operator func(args []object.Object) object.Object
 
 // T means Target which is a shortcut for map[string]interface{}
 type T map[string]interface{}
@@ -19,7 +17,7 @@ type T map[string]interface{}
 type P map[string]interface{}
 
 // O means operators which is a shortcut for map[string]operator.Operator
-type O map[string]Operator
+type O map[string]operator.Operator
 
 // Interpreter exec rule and return true or false
 type Interpreter struct {
