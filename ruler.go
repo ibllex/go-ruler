@@ -9,7 +9,7 @@ import (
 
 // Ruler ruler engine entry
 type Ruler struct {
-	//
+	operators interpreter.O
 }
 
 func makeInterpreter(rule string, ops interpreter.O) (*interpreter.Interpreter, error) {
@@ -25,7 +25,7 @@ func makeInterpreter(rule string, ops interpreter.O) (*interpreter.Interpreter, 
 
 // Satisfies returns true if the target matches the rules, false otherwise.
 func (r *Ruler) Satisfies(target interpreter.T, rule string, params interpreter.P) (bool, error) {
-	i, err := makeInterpreter(rule, interpreter.O{})
+	i, err := makeInterpreter(rule, r.operators)
 	if err != nil {
 		return false, err
 	}
@@ -48,6 +48,8 @@ func (r *Ruler) Filter(targets []interpreter.T, rule string, params interpreter.
 }
 
 // New construct a new ruler
-func New() *Ruler {
-	return &Ruler{}
+func New(operators interpreter.O) *Ruler {
+	return &Ruler{
+		operators: operators,
+	}
 }
