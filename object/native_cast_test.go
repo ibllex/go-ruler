@@ -134,3 +134,42 @@ func TestToNativeArray(t *testing.T) {
 		}
 	}
 }
+
+func TestNativeToObject(t *testing.T) {
+	values := []struct {
+		Native interface{}
+		Object Object
+	}{
+		{0, &Integer{0}},
+		{int16(10), &Integer{10}},
+		{int32(-10), &Integer{-10}},
+		{int64(10), &Integer{10}},
+
+		{0.0, &Float{0}},
+		{float32(10.5), &Float{10.5}},
+		{float64(-10.2), &Float{-10.2}},
+
+		{"", &String{""}},
+		{"abc", &String{"abc"}},
+
+		{false, &Boolean{false}},
+		{true, &Boolean{true}},
+
+		{
+			[]interface{}{10, 10.5, "abc", true},
+			&Array{[]Object{
+				&Integer{10}, &Float{10.5}, &String{"abc"}, &Boolean{true},
+			}},
+		},
+
+		{nil, &Null{}},
+		{map[string]string{}, &Null{}},
+		{[]string{}, &Null{}},
+	}
+
+	for i, v := range values {
+		if !NativeToObject(v.Native).Equals(v.Object) {
+			t.Errorf("values[%d](%v) to object cast error", i, v)
+		}
+	}
+}

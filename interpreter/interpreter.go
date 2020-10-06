@@ -10,7 +10,7 @@ import (
 )
 
 // Operator func type
-type Operator func(args ...object.Object) object.Object
+type Operator func(args []object.Object) object.Object
 
 // T means Target which is a shortcut for map[string]interface{}
 type T map[string]interface{}
@@ -33,6 +33,8 @@ func (i *Interpreter) eval(node ast.Node) object.Object {
 	switch node := node.(type) {
 	case *ast.LogicalOp:
 		return i.evalLogicalOp(node)
+	case *ast.FunctionCall:
+		return i.evalFunctionCall(node)
 	case *ast.Target:
 		return i.evalIdent(node.ID, i.target)
 	case *ast.Param:
@@ -62,29 +64,7 @@ func (i *Interpreter) evalNum(node *ast.Num) object.Object {
 
 func (i *Interpreter) evalIdent(node *ast.Ident, source map[string]interface{}) object.Object {
 	v := utils.QueryInMapInter(source, node.Path)
-
-	switch v := v.(type) {
-	case int:
-		return &object.Integer{Value: int64(v)}
-	case int8:
-		return &object.Integer{Value: int64(v)}
-	case int16:
-		return &object.Integer{Value: int64(v)}
-	case int32:
-		return &object.Integer{Value: int64(v)}
-	case int64:
-		return &object.Integer{Value: v}
-	case float32:
-		return &object.Float{Value: float64(v)}
-	case float64:
-		return &object.Float{Value: v}
-	case string:
-		return &object.String{Value: v}
-	case bool:
-		return &object.Boolean{Value: v}
-	}
-
-	return &object.Null{}
+	return object.NativeToObject(v)
 }
 
 func (i *Interpreter) evalLogicalOp(node *ast.LogicalOp) object.Object {
@@ -116,6 +96,18 @@ func (i *Interpreter) evalLogicalOp(node *ast.LogicalOp) object.Object {
 	}
 
 	return &object.Boolean{Value: value}
+}
+
+func (i *Interpreter) evalFunctionCall(node *ast.FunctionCall) object.Object {
+	if i.Operators[node.FuncName] != nil {
+		params := []object.Object{}
+		for _, p := range node.Params {
+			params = append(params, i.eval(p))
+		}
+		return i.Operators[node.FuncName](params)
+	}
+
+	return &object.Null{}
 }
 
 // Exec Execute the expression and return the result

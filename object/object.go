@@ -44,3 +44,21 @@ func IsNull(o Object) bool {
 func IsEqual(l Object, r Object) bool {
 	return l.Equals(r)
 }
+
+// IsEmpty returns if an object is empty
+func IsEmpty(o Object) bool {
+	switch o := o.(type) {
+	case *String:
+		return o.Value == "" || o.Value == "0"
+	case *Integer:
+		return o.Value == 0
+	case *Float:
+		return o.Value == 0
+	case *Array:
+		return len(o.Elements) == 0
+	case *Boolean:
+		return o.Value == false
+	}
+
+	return true
+}

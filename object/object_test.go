@@ -249,3 +249,29 @@ func TestIsNull(t *testing.T) {
 		t.Errorf("Null object is not equal Null")
 	}
 }
+
+func TestIsEmpty(t *testing.T) {
+	values := []struct {
+		Object  Object
+		IsEmpty bool
+	}{
+		{&String{""}, true},
+		{&String{"0"}, true},
+		{&Integer{0}, true},
+		{&Integer{-1}, false},
+		{&Integer{1}, false},
+		{&Float{0}, true},
+		{&Float{1}, false},
+		{&Boolean{false}, true},
+		{&Boolean{true}, false},
+		{&Array{[]Object{}}, true},
+		{&Array{[]Object{&Boolean{true}}}, false},
+		{&Null{}, true},
+	}
+
+	for i, v := range values {
+		if IsEmpty(v.Object) != v.IsEmpty {
+			t.Fatalf("values[%d](%v) expected empty check is {%v}.", i, v, v.IsEmpty)
+		}
+	}
+}

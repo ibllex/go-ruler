@@ -24,11 +24,28 @@ func makeInterpreter(src string, ops O) Interpreter {
 func TestInterpreter(t *testing.T) {
 
 	operators := O{
-		"empty": func(args ...object.Object) object.Object {
-			return &object.Boolean{Value: true}
+		"empty": func(args []object.Object) object.Object {
+			v := true
+			if len(args) > 0 {
+				v = object.IsEmpty(args[0])
+			}
+			return &object.Boolean{Value: v}
 		},
-		"in_array": func(args ...object.Object) object.Object {
-			return &object.Boolean{Value: true}
+		"in_array": func(args []object.Object) object.Object {
+			v := false
+			if len(args) >= 2 {
+				arr, _ := args[0].Cast(object.ARRAY).(*object.Array)
+				target := args[1]
+
+				for _, i := range arr.Elements {
+					if i.Equals(target) {
+						v = true
+						break
+					}
+				}
+			}
+
+			return &object.Boolean{Value: v}
 		},
 	}
 
@@ -56,22 +73,22 @@ func TestInterpreter(t *testing.T) {
 		{
 			Result: &object.Boolean{Value: true},
 			Target: T{"name": "Joe"},
-			Params: P{"users": []string{"Joe", "Moe"}},
+			Params: P{"users": []interface{}{"Joe", "Moe"}},
 		},
 		{
 			Result: &object.Boolean{Value: true},
 			Target: T{"name": "Moe"},
-			Params: P{"users": []string{"Joe", "Moe"}},
+			Params: P{"users": []interface{}{"Joe", "Moe"}},
 		},
 		{
 			Result: &object.Boolean{Value: true},
 			Target: T{"name": ""},
-			Params: P{"users": []string{"Joe", "Moe"}},
+			Params: P{"users": []interface{}{"Joe", "Moe"}},
 		},
 		{
 			Result: &object.Boolean{Value: false},
 			Target: T{"name": "Alice"},
-			Params: P{"users": []string{"Joe", "Moe"}},
+			Params: P{"users": []interface{}{"Joe", "Moe"}},
 		},
 	}
 
