@@ -86,13 +86,13 @@ func (p *Parser) term() (node ast.Node, err error) {
 }
 
 // factor: INTEGER_CONST | FLOAT_CONST | STRING_CONST | FALSE | TRUE | NULL
-// 			functionCall | target | param | LPAREN expr RPAREN
+// 			operator | target | param | LPAREN expr RPAREN
 func (p *Parser) factor() (node ast.Node, err error) {
 	tk := p.currentToken
 
 	if tk.Type == token.IDENT {
 		if p.lexer.CurrentChar() == '(' {
-			return p.functionCall()
+			return p.operator()
 		}
 
 		return p.target()
@@ -140,9 +140,9 @@ func (p *Parser) factor() (node ast.Node, err error) {
 	return nil, fmt.Errorf("Invalid syntax, unexpected %v", tk.Type)
 }
 
-// functionCall: IDENT LPAREN (expr (COMMA expr)*)? RPAREN
-func (p *Parser) functionCall() (node ast.Node, err error) {
-	funcName := p.currentToken.Literal
+// operator: IDENT LPAREN (expr (COMMA expr)*)? RPAREN
+func (p *Parser) operator() (node ast.Node, err error) {
+	name := p.currentToken.Literal
 
 	if err = p.eat(token.IDENT); err != nil {
 		return
@@ -178,7 +178,7 @@ func (p *Parser) functionCall() (node ast.Node, err error) {
 		return
 	}
 
-	node = ast.NewFunctionCall(funcName, params)
+	node = ast.NewOperator(name, params)
 	return
 }
 

@@ -33,8 +33,8 @@ func (i *Interpreter) eval(node ast.Node) object.Object {
 	switch node := node.(type) {
 	case *ast.LogicalOp:
 		return i.evalLogicalOp(node)
-	case *ast.FunctionCall:
-		return i.evalFunctionCall(node)
+	case *ast.Operator:
+		return i.evalOperator(node)
 	case *ast.Target:
 		return i.evalIdent(node.ID, i.target)
 	case *ast.Param:
@@ -98,13 +98,13 @@ func (i *Interpreter) evalLogicalOp(node *ast.LogicalOp) object.Object {
 	return &object.Boolean{Value: value}
 }
 
-func (i *Interpreter) evalFunctionCall(node *ast.FunctionCall) object.Object {
-	if i.Operators[node.FuncName] != nil {
+func (i *Interpreter) evalOperator(node *ast.Operator) object.Object {
+	if i.Operators[node.Name] != nil {
 		params := []object.Object{}
 		for _, p := range node.Params {
 			params = append(params, i.eval(p))
 		}
-		return i.Operators[node.FuncName](params)
+		return i.Operators[node.Name](params)
 	}
 
 	return &object.Null{}
