@@ -5,7 +5,36 @@ import (
 
 	"github.com/ibllex/go-ruler/interpreter"
 	"github.com/ibllex/go-ruler/operator"
+	"github.com/ibllex/go-ruler/spec"
 )
+
+// IsFemale Mock specification
+type IsFemale struct {
+	//
+}
+
+func (s *IsFemale) Rule() string {
+	return "gender = 'F'"
+}
+
+func (s *IsFemale) Params() interpreter.P {
+	return interpreter.P{}
+}
+
+// PlayerMinScore Mock specification
+type PlayerMinScore struct {
+	minScore int
+}
+
+func (p *PlayerMinScore) Rule() string {
+	return "points > :min_score"
+}
+
+func (p *PlayerMinScore) Params() interpreter.P {
+	return interpreter.P{
+		"min_score": p.minScore,
+	}
+}
 
 func TestSatisfies(t *testing.T) {
 
@@ -35,6 +64,38 @@ func TestSatisfies(t *testing.T) {
 
 	for i, p := range players {
 		ret, err := ruler.Satisfies(p.Target, rule, params)
+		if err != nil {
+			t.Errorf("players[%d] error: %v", i, err)
+		}
+
+		if ret != p.Result {
+			t.Errorf("players[%d] satisfies result mismatch expected", i)
+		}
+	}
+}
+
+func TestSatisfiesSpec(t *testing.T) {
+
+	ruler := New(interpreter.O{})
+	isFemale := &IsFemale{}
+	minScore := &PlayerMinScore{30}
+
+	spec := spec.AndX([]spec.Specification{
+		isFemale, minScore,
+	})
+
+	players := []struct {
+		Target interpreter.T
+		Result bool
+	}{
+		{interpreter.T{"pseudo": "Joe", "gender": "M", "points": 40}, false},
+		{interpreter.T{"pseudo": "Moe", "gender": "M", "points": 20}, false},
+		{interpreter.T{"pseudo": "Alice", "gender": "F", "points": 20}, false},
+		{interpreter.T{"pseudo": "Birdie", "gender": "F", "points": 60}, true},
+	}
+
+	for i, p := range players {
+		ret, err := ruler.SatisfiesSpec(p.Target, spec)
 		if err != nil {
 			t.Errorf("players[%d] error: %v", i, err)
 		}
@@ -75,6 +136,33 @@ func TestFilter(t *testing.T) {
 	}
 
 	if len(remainder) != 2 {
+		t.Errorf("remainder's count greater than one")
+	}
+}
+
+func TestFilterSpec(t *testing.T) {
+
+	ruler := New(interpreter.O{})
+	isFemale := &IsFemale{}
+	minScore := &PlayerMinScore{30}
+
+	spec := spec.OrX([]spec.Specification{
+		isFemale, minScore,
+	})
+
+	users := []interpreter.T{
+		{"pseudo": "Joe", "gender": "M", "points": 40},
+		{"pseudo": "Moe", "gender": "M", "points": 20},
+		{"pseudo": "Alice", "gender": "F", "points": 60},
+		{"pseudo": "Birdie", "gender": "F", "points": 20},
+	}
+
+	remainder, err := ruler.FilterSpec(users, spec)
+	if err != nil {
+		t.Errorf("filter error: %v", err)
+	}
+
+	if len(remainder) != 3 {
 		t.Errorf("remainder's count greater than one")
 	}
 }

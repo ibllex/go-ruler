@@ -5,6 +5,7 @@ import (
 	"github.com/ibllex/go-ruler/lexer"
 	"github.com/ibllex/go-ruler/object"
 	"github.com/ibllex/go-ruler/parser"
+	"github.com/ibllex/go-ruler/spec"
 )
 
 // Ruler ruler engine entry
@@ -33,6 +34,11 @@ func (r *Ruler) Satisfies(target interpreter.T, rule string, params interpreter.
 	return object.ToNativeBool(i.Exec(target, params)), nil
 }
 
+// SatisfiesSpec satisfies by specification.
+func (r *Ruler) SatisfiesSpec(target interpreter.T, s spec.Specification) (bool, error) {
+	return r.Satisfies(target, s.Rule(), s.Params())
+}
+
 // Filter filter and return all targets that match the rules
 func (r *Ruler) Filter(targets []interpreter.T, rule string, params interpreter.P) (ret []interpreter.T, err error) {
 
@@ -45,6 +51,11 @@ func (r *Ruler) Filter(targets []interpreter.T, rule string, params interpreter.
 	}
 
 	return
+}
+
+// FilterSpec filter by specification
+func (r *Ruler) FilterSpec(targets []interpreter.T, s spec.Specification) (ret []interpreter.T, err error) {
+	return r.Filter(targets, s.Rule(), s.Params())
 }
 
 // New construct a new ruler
