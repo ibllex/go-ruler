@@ -36,6 +36,21 @@ func (p *PlayerMinScore) Params() interpreter.P {
 	}
 }
 
+// GroupSpec Mock specification for positional param
+type GroupSpec struct {
+	group string
+}
+
+func (g *GroupSpec) Rule() string {
+	return "group = :group"
+}
+
+func (g *GroupSpec) Params() interpreter.P {
+	return interpreter.P{
+		"group": g.group,
+	}
+}
+
 func TestSatisfies(t *testing.T) {
 
 	operators := interpreter.O{
@@ -163,6 +178,31 @@ func TestFilterSpec(t *testing.T) {
 	}
 
 	if len(remainder) != 3 {
-		t.Errorf("remainder's count greater than one")
+		t.Errorf("remainder's count is not 3, actually, it's %d.", len(remainder))
+	}
+}
+
+func TestPositionalParam(t *testing.T) {
+	ruler := New(interpreter.O{})
+	groupOneSpec := &GroupSpec{group: "group one"}
+	groupTwoSpec := &GroupSpec{group: "group two"}
+
+	spec := spec.OrX([]spec.Specification{
+		groupOneSpec, groupTwoSpec,
+	})
+
+	data := []interpreter.T{
+		{"name": "test 01", "group": "group one"},
+		{"name": "test 02", "group": "group two"},
+		{"name": "test 03", "group": "group three"},
+	}
+
+	remainder, err := ruler.FilterSpec(data, spec)
+	if err != nil {
+		t.Errorf("filter error: %v", err)
+	}
+
+	if len(remainder) != 2 {
+		t.Errorf("remainder's count is not 2, actually, it's %d.", len(remainder))
 	}
 }
