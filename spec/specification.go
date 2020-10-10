@@ -8,4 +8,5 @@ import (
 type Specification interface {
 	Rule() string
 	Params() interpreter.P
+	PositionalParams() interpreter.PP
 }

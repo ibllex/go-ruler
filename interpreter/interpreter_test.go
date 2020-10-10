@@ -11,9 +11,10 @@ import (
 )
 
 type filterItem struct {
-	Result object.Object
-	Target T
-	Params P
+	Result           object.Object
+	Target           T
+	Params           P
+	PositionalParams PP
 }
 
 func makeInterpreter(src string, ops O) Interpreter {
@@ -73,10 +74,33 @@ func TestInterpreter(t *testing.T) {
 		},
 	}
 
+	// positional params
+	pp := PP{}
+	pp.Push("group_01")
+	pp.Push("group_02")
+
+	statements["group = ? or group = ?"] = []filterItem{
+		{
+			Result:           &object.Boolean{Value: true},
+			Target:           T{"group": "group_01"},
+			PositionalParams: pp,
+		},
+		{
+			Result:           &object.Boolean{Value: true},
+			Target:           T{"group": "group_02"},
+			PositionalParams: pp,
+		},
+		{
+			Result:           &object.Boolean{Value: false},
+			Target:           T{"group": "group_03"},
+			PositionalParams: pp,
+		},
+	}
+
 	for rule, items := range statements {
 		interpreter := makeInterpreter(rule, operators)
 		for i, s := range items {
-			r := interpreter.Exec(s.Target, s.Params)
+			r := interpreter.Exec(s.Target, s.Params, s.PositionalParams)
 			if object.IsNull(r) {
 				t.Fatalf("Rule: %s [%d] returns Null", rule, i)
 			} else if r.(object.Hashable).HashKey() != s.Result.(object.Hashable).HashKey() {

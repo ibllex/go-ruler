@@ -16,15 +16,21 @@ type T map[string]interface{}
 // P means params which is a shortcut for map[string]interface{}
 type P map[string]interface{}
 
+// PP means Positional Params
+type PP struct {
+	utils.Queue
+}
+
 // O means operators which is a shortcut for map[string]operator.Operator
 type O map[string]operator.Operator
 
 // Interpreter exec rule and return true or false
 type Interpreter struct {
-	root      ast.Node
-	target    T
-	params    P
-	Operators O
+	root             ast.Node
+	target           T
+	params           P
+	positionalParams PP
+	Operators        O
 }
 
 func (i *Interpreter) eval(node ast.Node) object.Object {
@@ -37,6 +43,11 @@ func (i *Interpreter) eval(node ast.Node) object.Object {
 		return i.evalIdent(node.ID, i.target)
 	case *ast.Param:
 		return i.evalIdent(node.ID, i.params)
+	case *ast.PositionalParam:
+		if i.positionalParams.IsEmpty() {
+			return &object.Null{}
+		}
+		return object.NativeToObject(i.positionalParams.Pop())
 	case *ast.Num:
 		return i.evalNum(node)
 	case *ast.Boolean:
@@ -109,9 +120,10 @@ func (i *Interpreter) evalOperator(node *ast.Operator) object.Object {
 }
 
 // Exec Execute the expression and return the result
-func (i *Interpreter) Exec(target T, params P) object.Object {
+func (i *Interpreter) Exec(target T, params P, positionalParams PP) object.Object {
 	i.target = target
 	i.params = params
+	i.positionalParams = positionalParams
 	return i.eval(i.root)
 }
 

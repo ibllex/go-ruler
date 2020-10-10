@@ -38,6 +38,20 @@ func (c *Composite) Params() interpreter.P {
 	return params
 }
 
+// PositionalParams combine all specifications's positional params
+func (c *Composite) PositionalParams() interpreter.PP {
+	pParams := interpreter.PP{}
+
+	for _, s := range c.specifications {
+		pp := s.PositionalParams()
+		for !pp.IsEmpty() {
+			pParams.Push(pp.Pop())
+		}
+	}
+
+	return pParams
+}
+
 // AddSpecification add specification after construct
 func (c *Composite) AddSpecification(spec Specification) {
 	c.specifications = append(c.specifications, spec)

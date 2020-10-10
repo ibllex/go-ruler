@@ -21,6 +21,10 @@ func (s *IsFemale) Params() interpreter.P {
 	return interpreter.P{}
 }
 
+func (s *IsFemale) PositionalParams() interpreter.PP {
+	return interpreter.PP{}
+}
+
 // PlayerMinScore Mock specification
 type PlayerMinScore struct {
 	minScore int
@@ -36,19 +40,27 @@ func (p *PlayerMinScore) Params() interpreter.P {
 	}
 }
 
+func (p *PlayerMinScore) PositionalParams() interpreter.PP {
+	return interpreter.PP{}
+}
+
 // GroupSpec Mock specification for positional param
 type GroupSpec struct {
 	group string
 }
 
 func (g *GroupSpec) Rule() string {
-	return "group = :group"
+	return "group = ?"
 }
 
 func (g *GroupSpec) Params() interpreter.P {
-	return interpreter.P{
-		"group": g.group,
-	}
+	return interpreter.P{}
+}
+
+func (g *GroupSpec) PositionalParams() interpreter.PP {
+	pp := interpreter.PP{}
+	pp.Push(g.group)
+	return pp
 }
 
 func TestSatisfies(t *testing.T) {
@@ -78,7 +90,7 @@ func TestSatisfies(t *testing.T) {
 	}
 
 	for i, p := range players {
-		ret, err := ruler.Satisfies(p.Target, rule, params)
+		ret, err := ruler.Satisfies(p.Target, rule, params, interpreter.PP{})
 		if err != nil {
 			t.Errorf("players[%d] error: %v", i, err)
 		}
@@ -145,7 +157,7 @@ func TestFilter(t *testing.T) {
 		{"pseudo": "Birdie", "gender": "F", "points": 60},
 	}
 
-	remainder, err := ruler.Filter(users, rule, params)
+	remainder, err := ruler.Filter(users, rule, params, interpreter.PP{})
 	if err != nil {
 		t.Errorf("filter error: %v", err)
 	}
