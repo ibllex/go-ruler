@@ -29,6 +29,7 @@ const (
 	EQUAL  Type = "="
 	GT     Type = ">"
 	LT     Type = "<"
+	QM     Type = "?"
 
 	// double-character token types
 	NOT_EQUAL   Type = "!="
@@ -61,6 +62,7 @@ var singleCharacterTypes = map[byte]Type{
 	'=': EQUAL,
 	'>': GT,
 	'<': LT,
+	'?': QM,
 }
 
 var doubleCharacterTypes = map[string]Type{

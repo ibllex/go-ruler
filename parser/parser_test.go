@@ -24,6 +24,7 @@ func TestParser(t *testing.T) {
 		{"male or female", false},
 		{"target = find(:data, 'data')", false},
 		{"target <= find(:data, 'data')", false},
+		{"group = ? or group = ?", false},
 
 		{"gender and", true},
 		{"and gender", true},

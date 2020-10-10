@@ -86,7 +86,7 @@ func (p *Parser) term() (node ast.Node, err error) {
 }
 
 // factor: INTEGER_CONST | FLOAT_CONST | STRING_CONST | FALSE | TRUE | NULL
-// 			operator | target | param | LPAREN expr RPAREN
+// 			operator | target | positionalParam | param | LPAREN expr RPAREN
 func (p *Parser) factor() (node ast.Node, err error) {
 	tk := p.currentToken
 
@@ -96,6 +96,10 @@ func (p *Parser) factor() (node ast.Node, err error) {
 		}
 
 		return p.target()
+	}
+
+	if tk.Type == token.QM {
+		return p.positionalParam()
 	}
 
 	if tk.Type == token.COLON {
@@ -190,6 +194,17 @@ func (p *Parser) target() (node ast.Node, err error) {
 	}
 
 	node = ast.NewTarget(node.(*ast.Ident))
+	return
+}
+
+// positionalParam: QM
+func (p *Parser) positionalParam() (node ast.Node, err error) {
+	err = p.eat(token.QM)
+	if err != nil {
+		return
+	}
+
+	node = ast.NewPositionalParam()
 	return
 }
 

@@ -11,12 +11,13 @@ import (
 func TestNextToken(t *testing.T) {
 
 	// TODO: support bit operation
-	input := "() , . : = > < != >= <= false true null and or xor 10 20.0 'username' \"hello\" :gender_de female_02"
+	input := "? () , . : = > < != >= <= false true null and or xor 10 20.0 'username' \"hello\" :gender_de female_02"
 
 	tests := []struct {
 		expectedType    token.Type
 		expectedLiteral string
 	}{
+		{token.QM, "?"},
 		{token.LPAREN, "("},
 		{token.RPAREN, ")"},
 		{token.COMMA, ","},
