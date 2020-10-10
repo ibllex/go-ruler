@@ -21,6 +21,11 @@ func (s *NotSpec) Params() interpreter.P {
 	return s.spec.Params()
 }
 
+// PositionalParams not specification positional params
+func (s *NotSpec) PositionalParams() interpreter.PP {
+	return s.spec.PositionalParams()
+}
+
 // Not create not specification
 func Not(spec Specification) *NotSpec {
 	return &NotSpec{
