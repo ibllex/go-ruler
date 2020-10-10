@@ -20,6 +20,10 @@ func (s *IsFemale) Params() interpreter.P {
 	return interpreter.P{}
 }
 
+func (s *IsFemale) PositionalParams() interpreter.PP {
+	return interpreter.PP{}
+}
+
 // PlayerMinScore Mock specification
 type PlayerMinScore struct {
 	minScore int
@@ -33,6 +37,10 @@ func (p *PlayerMinScore) Params() interpreter.P {
 	return interpreter.P{
 		"min_score": p.minScore,
 	}
+}
+
+func (p *PlayerMinScore) PositionalParams() interpreter.PP {
+	return interpreter.PP{}
 }
 
 func assertCompositeResult(t *testing.T, spec Specification, rule string, params interpreter.P) {
