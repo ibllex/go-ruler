@@ -17,12 +17,12 @@ func (s *IsFemale) Rule() string {
 	return "gender = 'F'"
 }
 
-func (s *IsFemale) Params() interpreter.P {
-	return interpreter.P{}
+func (s *IsFemale) Params() P {
+	return P{}
 }
 
-func (s *IsFemale) PositionalParams() interpreter.PP {
-	return interpreter.PP{}
+func (s *IsFemale) PositionalParams() PP {
+	return PP{}
 }
 
 // PlayerMinScore Mock specification
@@ -34,14 +34,14 @@ func (p *PlayerMinScore) Rule() string {
 	return "points > :min_score"
 }
 
-func (p *PlayerMinScore) Params() interpreter.P {
-	return interpreter.P{
+func (p *PlayerMinScore) Params() P {
+	return P{
 		"min_score": p.minScore,
 	}
 }
 
-func (p *PlayerMinScore) PositionalParams() interpreter.PP {
-	return interpreter.PP{}
+func (p *PlayerMinScore) PositionalParams() PP {
+	return PP{}
 }
 
 // GroupSpec Mock specification for positional param
@@ -53,25 +53,25 @@ func (g *GroupSpec) Rule() string {
 	return "group = ?"
 }
 
-func (g *GroupSpec) Params() interpreter.P {
-	return interpreter.P{}
+func (g *GroupSpec) Params() P {
+	return P{}
 }
 
-func (g *GroupSpec) PositionalParams() interpreter.PP {
-	pp := interpreter.PP{}
+func (g *GroupSpec) PositionalParams() PP {
+	pp := PP{}
 	pp.Push(g.group)
 	return pp
 }
 
 func TestSatisfies(t *testing.T) {
 
-	operators := interpreter.O{
+	operators := O{
 		"in_array": operator.InArray,
 	}
 
 	ruler := New(operators)
 	rule := "(gender = :gender and points > :min_points) or in_array(:users, pseudo)"
-	params := interpreter.P{
+	params := P{
 		"min_points": 30,
 		"gender":     "M",
 		"users": []interface{}{
@@ -80,17 +80,17 @@ func TestSatisfies(t *testing.T) {
 	}
 
 	players := []struct {
-		Target interpreter.T
+		Target T
 		Result bool
 	}{
-		{interpreter.T{"pseudo": "Joe", "gender": "M", "points": 40}, true},
-		{interpreter.T{"pseudo": "Moe", "gender": "M", "points": 20}, false},
-		{interpreter.T{"pseudo": "Alice", "gender": "F", "points": 60}, false},
-		{interpreter.T{"pseudo": "Birdie", "gender": "F", "points": 60}, true},
+		{T{"pseudo": "Joe", "gender": "M", "points": 40}, true},
+		{T{"pseudo": "Moe", "gender": "M", "points": 20}, false},
+		{T{"pseudo": "Alice", "gender": "F", "points": 60}, false},
+		{T{"pseudo": "Birdie", "gender": "F", "points": 60}, true},
 	}
 
 	for i, p := range players {
-		ret, err := ruler.Satisfies(p.Target, rule, params, interpreter.PP{})
+		ret, err := ruler.Satisfies(p.Target, rule, params, PP{})
 		if err != nil {
 			t.Errorf("players[%d] error: %v", i, err)
 		}
@@ -103,7 +103,7 @@ func TestSatisfies(t *testing.T) {
 
 func TestSatisfiesSpec(t *testing.T) {
 
-	ruler := New(interpreter.O{})
+	ruler := New(O{})
 	isFemale := &IsFemale{}
 	minScore := &PlayerMinScore{30}
 
@@ -112,10 +112,10 @@ func TestSatisfiesSpec(t *testing.T) {
 	})
 
 	players := []struct {
-		Target interpreter.T
+		Target T
 		Result bool
 	}{
-		{interpreter.T{"pseudo": "Joe", "gender": "M", "points": 40}, false},
+		{T{"pseudo": "Joe", "gender": "M", "points": 40}, false},
 		{interpreter.T{"pseudo": "Moe", "gender": "M", "points": 20}, false},
 		{interpreter.T{"pseudo": "Alice", "gender": "F", "points": 20}, false},
 		{interpreter.T{"pseudo": "Birdie", "gender": "F", "points": 60}, true},

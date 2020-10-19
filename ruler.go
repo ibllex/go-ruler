@@ -8,12 +8,27 @@ import (
 	"github.com/ibllex/go-ruler/spec"
 )
 
+// T is alias of interpreter.T
+type T = interpreter.T
+
+// O is alias of interpreter.O
+type O = interpreter.O
+
+// P is alias of interpreter.P
+type P = interpreter.P
+
+// PP is alias of interpreter.PP
+type PP = interpreter.PP
+
+// Interpreter is alias of interpreter.Interpreter
+type Interpreter = interpreter.Interpreter
+
 // Ruler ruler engine entry
 type Ruler struct {
-	operators interpreter.O
+	operators O
 }
 
-func makeInterpreter(rule string, ops interpreter.O) (*interpreter.Interpreter, error) {
+func makeInterpreter(rule string, ops O) (*Interpreter, error) {
 	p := parser.New(lexer.New(rule))
 	tree, err := p.Parse()
 	if err != nil {
@@ -25,7 +40,7 @@ func makeInterpreter(rule string, ops interpreter.O) (*interpreter.Interpreter, 
 }
 
 // Satisfies returns true if the target matches the rules, false otherwise.
-func (r *Ruler) Satisfies(target interpreter.T, rule string, params interpreter.P, pParams interpreter.PP) (bool, error) {
+func (r *Ruler) Satisfies(target T, rule string, params P, pParams PP) (bool, error) {
 	i, err := makeInterpreter(rule, r.operators)
 	if err != nil {
 		return false, err
@@ -35,12 +50,12 @@ func (r *Ruler) Satisfies(target interpreter.T, rule string, params interpreter.
 }
 
 // SatisfiesSpec satisfies by specification.
-func (r *Ruler) SatisfiesSpec(target interpreter.T, s spec.Specification) (bool, error) {
+func (r *Ruler) SatisfiesSpec(target T, s spec.Specification) (bool, error) {
 	return r.Satisfies(target, s.Rule(), s.Params(), s.PositionalParams())
 }
 
 // Filter filter and return all targets that match the rules
-func (r *Ruler) Filter(targets []interpreter.T, rule string, params interpreter.P, pParams interpreter.PP) (ret []interpreter.T, err error) {
+func (r *Ruler) Filter(targets []T, rule string, params P, pParams PP) (ret []T, err error) {
 
 	ok := false
 
@@ -54,12 +69,12 @@ func (r *Ruler) Filter(targets []interpreter.T, rule string, params interpreter.
 }
 
 // FilterSpec filter by specification
-func (r *Ruler) FilterSpec(targets []interpreter.T, s spec.Specification) (ret []interpreter.T, err error) {
+func (r *Ruler) FilterSpec(targets []T, s spec.Specification) (ret []T, err error) {
 	return r.Filter(targets, s.Rule(), s.Params(), s.PositionalParams())
 }
 
 // New construct a new ruler
-func New(operators interpreter.O) *Ruler {
+func New(operators O) *Ruler {
 	return &Ruler{
 		operators: operators,
 	}

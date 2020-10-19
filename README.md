@@ -10,7 +10,13 @@ Once a rule (or a specification) is written, it can be used to check if a single
 
 ## Quick usage
 
-#### 1. Write a rule
+#### 1. Install
+
+```shell
+go get -u github.com/ibllex/go-ruler
+```
+
+#### 2. Write a rule
 
 The rule hereafter describes a "*high ranked female player*" (basically, a female player having more than 9000 points).
 
@@ -18,45 +24,41 @@ The rule hereafter describes a "*high ranked female player*" (basically, a femal
 highRankFemalesRule := "gender = 'F' and points > 9000"
 ```
 
-#### 2. Define a datasource
+#### 3. Define a datasource
 
 We have the following datasources:
 
 ```go
-import "github.com/ibllex/go-ruler/interpreter"
+import "github.com/ibllex/go-ruler"
 
-players := []interpreter.T{
-	interpreter.T{"pseudo": "Joe", "gender": "M", "points": 40},
-	interpreter.T{"pseudo": "Moe", "gender": "M", "points": 20},
-	interpreter.T{"pseudo": "Alice", "gender": "F", "points": 60},
-	interpreter.T{"pseudo": "Birdie", "gender": "F", "points": 60},
+players := []ruler.T{
+	ruler.T{"pseudo": "Joe", "gender": "M", "points": 40},
+	ruler.T{"pseudo": "Moe", "gender": "M", "points": 20},
+	ruler.T{"pseudo": "Alice", "gender": "F", "points": 60},
+	ruler.T{"pseudo": "Birdie", "gender": "F", "points": 60},
 }
 ```
 
-#### 3. Create ruler
+#### 4. Create ruler
 
 ```go
 import (
 	"github.com/ibllex/go-ruler"
-
-	"github.com/ibllex/go-ruler/interpreter"
 )
 
-ruler := ruler.New(interpreter.O{})
+r := ruler.New(ruler.O{})
 ```
 
-#### 3. Use a rule to query a datasource
+#### 5. Use a rule to query a datasource
 
 retrieving the results is as simple as calling the `Filter` method:
 
 ```go
 import (
 	"github.com/ibllex/go-ruler"
-
-	"github.com/ibllex/go-ruler/interpreter"
 )
 
-highRankFemales, err := ruler.Filter(players, highRankFemalesRule, interpreter.P{}, interpreter.PP{})
+highRankFemales, err := r.Filter(players, highRankFemalesRule, ruler.P{}, ruler.PP{})
 ```
 
 Given a candidate, checking if it satisfies a rule boils down to calling the `Satisfies` method:
@@ -64,11 +66,9 @@ Given a candidate, checking if it satisfies a rule boils down to calling the `Sa
 ```go
 import (
 	"github.com/ibllex/go-ruler"
-
-	"github.com/ibllex/go-ruler/interpreter"
 )
 
-isHighRankFemale, err := ruler.Satisfies(players[0], highRankFemalesRule, interpreter.P{}, interpreter.PP{})
+isHighRankFemale, err := r.Satisfies(players[0], highRankFemalesRule, ruler.P{}, ruler.PP{})
 ```
 
 ## License
